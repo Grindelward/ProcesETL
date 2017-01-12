@@ -155,11 +155,10 @@ function exportCsv() {
 
 function exportTxt() {
     $mysqli = $GLOBALS['mysqli'];
-    $tableArray = ["products", "opinions", "plus_minus"];
-    foreach ($tableArray as $table){
-       $result = mysqli_query($mysqli, "SELECT * FROM ".$table);
-       $fp = fopen($table.'.txt', 'w');
-       while($row = mysqli_fetch_array($result, MYSQLI_NUM)){           
+    $result = mysqli_query($mysqli, "SELECT * FROM opinions");
+    while($row = mysqli_fetch_array($result, MYSQLI_NUM)){  
+         $fp = fopen('opinion_'.$row[0].'.txt', 'w');
+        
         $num = mysqli_num_fields($result) ;    
         $last = $num - 1;
         for($i = 0; $i < $num; $i++) {            
@@ -167,12 +166,11 @@ function exportTxt() {
             if ($i != $last) {
                 fwrite($fp, ",");
             }
-        }                                                                 
+        }   
         fwrite($fp, "\n");
+        fclose($fp);
     }
-
-    fclose($fp); 
-    }
+    
 }
 
 # var_dump($op);
