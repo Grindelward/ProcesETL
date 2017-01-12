@@ -16,6 +16,8 @@
   <input type="submit" value="E" name="Extract"> 
   <input type="submit" value="T" name="Transform"> 
   <input type="submit" value="L" name="Load"> 
+  <input type="submit" value="CSV" name="CSV">
+  <input type="submit" value="TXT" name="TXT">
 </form> 
  
     <form method="post" action="action_page.php">

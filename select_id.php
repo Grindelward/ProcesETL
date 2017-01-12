@@ -4,7 +4,6 @@ $productId = $_GET['IDproduktu'];
 require ('connect_sql.php');
 connect_database();
 
-
 $dane = mysql_query("SELECT * FROM products WHERE serial_number='$productId'") ;
 
 
@@ -31,12 +30,6 @@ $dane = mysql_query("SELECT * FROM products WHERE serial_number='$productId'") ;
 		
 	};
 	echo "</table>"; 
-
-
-
-	
-	
-	
 
 
 $dane2 = mysql_query("SELECT * FROM opinions  WHERE serial_number='$productId'") ;

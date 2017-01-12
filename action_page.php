@@ -6,6 +6,14 @@ $GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_err
 if (isset($_POST['clearDB'])) {
     clearDB($mysqli);
     return 0;
+}else if (isset($_GET['CSV'])) {
+    exportCsv();
+    echo 'exported CSV';
+    return 0;
+}else if (isset($_GET['TXT'])) {
+    exportTxt();
+    echo 'exported TXT';
+    return 0;
 }else if($_GET['IDproduktu'] == null){
     echo "Zjebie podaj numer produkt";
     return 0;
@@ -125,6 +133,46 @@ function clearDB() {
     mysqli_query($mysqli, "TRUNCATE TABLE plus_minus");
     echo "Baza wyczyszczona";
     return 0;
+}
+
+function exportCsv() {
+    $mysqli = $GLOBALS['mysqli'];
+    $tableArray = ["products", "opinions", "plus_minus"];
+    foreach ($tableArray as $table){
+       $result = mysqli_query($mysqli, "SELECT * FROM ".$table);
+       
+    $row = mysqli_fetch_all($result, MYSQLI_NUM);
+    var_dump($row);
+    $fp = fopen($table.'.csv', 'w');
+
+    foreach ($row as $val) {
+        fputcsv($fp, $val);
+    }
+
+    fclose($fp); 
+    }
+}
+
+function exportTxt() {
+    $mysqli = $GLOBALS['mysqli'];
+    $tableArray = ["products", "opinions", "plus_minus"];
+    foreach ($tableArray as $table){
+       $result = mysqli_query($mysqli, "SELECT * FROM ".$table);
+       $fp = fopen($table.'.txt', 'w');
+       while($row = mysqli_fetch_array($result, MYSQLI_NUM)){           
+        $num = mysqli_num_fields($result) ;    
+        $last = $num - 1;
+        for($i = 0; $i < $num; $i++) {            
+            fwrite($fp, $row[$i]);                       
+            if ($i != $last) {
+                fwrite($fp, ",");
+            }
+        }                                                                 
+        fwrite($fp, "\n");
+    }
+
+    fclose($fp); 
+    }
 }
 
 # var_dump($op);
