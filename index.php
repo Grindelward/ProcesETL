@@ -7,6 +7,7 @@
 </head>
 <body>  
 
+
 <form action="class_etl.php" method="GET">
   Product ID:<br>
   <input id="productId" type="text" name="IDproduktu" value="">
@@ -18,6 +19,8 @@
   <input id="LOAD" type="submit" value="L" name="Load"> 
   <input id="CSV" type="submit" value="CSV" name="CSV">
   <input id="TXT" type="submit" value="TXT" name="TXT">
+  <input id="showAll" type="submit" value="All" name="ShowAll">
+  <input id="showId" type="submit" value="ShowById" name="ShowId">
 </form> 
  
     <input id="clearDB" type="submit" value="clearDB" name="clearDB"> 
@@ -103,6 +106,28 @@
                 data: {
                 jobType: "LOAD"
             },
+                success:function(result){
+          $("#ETL_result").html(result);
+        }});
+      });
+      
+      $("#showAll").click(function(e){
+          e.preventDefault();
+        $.ajax({type: "POST",
+                url: "select_all.php",
+                data: {
+                jobType: "LOAD"
+            },
+                success:function(result){
+          $("#ETL_result").html(result);
+        }});
+      });
+      
+      $("#showId").click(function(e){
+          e.preventDefault();
+        $.ajax({type: "POST",
+                url: "select_id.php",
+                data: { idProduct: $("#productId").val(), jobType: "ETL" },
                 success:function(result){
           $("#ETL_result").html(result);
         }});

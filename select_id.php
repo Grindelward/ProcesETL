@@ -1,10 +1,12 @@
 <pre><?php
 
-$productId = $_GET['IDproduktu'];
+$productId = $_POST['idProduct'];
 require ('connect_sql.php');
-connect_database();
-
-$dane = mysql_query("SELECT * FROM products WHERE serial_number='$productId'") ;
+//connect_database();
+$GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_error());
+$mysqli = $GLOBALS['mysqli'];
+$dane = mysqli_query($mysqli,"SELECT * FROM products WHERE serial_number='$productId'") ;
+$dane2 = mysqli_query($mysqli,"SELECT * FROM opinions  WHERE product_id='$productId'") ;
 
 
    echo '<br/>';
@@ -18,7 +20,7 @@ $dane = mysql_query("SELECT * FROM products WHERE serial_number='$productId'") ;
 	echo "<td>".'Producent:';
 	echo "<td>".'Model:';
 	echo "<td>".'Nazwa:';
-	while ($rek = mysql_fetch_array($dane))
+	while ($rek = mysqli_fetch_array($dane))
 	{
 		echo "<tr>"; 
 		echo "<td>".$rek['id']."<br/>";
@@ -32,7 +34,7 @@ $dane = mysql_query("SELECT * FROM products WHERE serial_number='$productId'") ;
 	echo "</table>"; 
 
 
-$dane2 = mysql_query("SELECT * FROM opinions  WHERE serial_number='$productId'") ;
+
 
 $lp = 1;
 
@@ -51,11 +53,11 @@ $lp = 1;
 	echo "<td>".'Uzyteczna:';
 	echo "<td>".'Nieuzyteczna:';
 	
-	while ($rek2 = mysql_fetch_array($dane2))
+	while ($rek2 = mysqli_fetch_array($dane2))
 	{
 		echo "<tr>"; 
 		echo "<td>".$lp."<br/>";
-		echo "<td>".$rek2['serial_number']."<br/>";
+		echo "<td>".$rek2['product_id']."<br/>";
 		echo "<td>".$rek2['stars']."<br/>";
 		echo "<td>".$rek2['text']."<br/>";
 		echo "<td>".$rek2['author']."<br/>";

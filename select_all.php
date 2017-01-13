@@ -39,11 +39,11 @@ close_sql_connection();
 
 
 ?>
-
+<!--
 <html>
 <form method="post" action="index.php">	
  <input type="submit" value="Powrot" />
 </form>
 
 
-</html>
+</html>-->
