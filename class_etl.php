@@ -13,11 +13,28 @@ $GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_err
  *
  * @author DamianFigurski
  */
+
+
 class etl {
-    var $baseUrl = 'http://www.ceneo.pl/';
-    var $opinonsTab = '/#tab=reviews';
-    var $opinionSub = '/opinie-';
+    private static $instance;
     
+    public static function getInstance() {
+        if(self::$instance === null) {
+            self::$instance = new etl();
+        }
+        return self::$instance;
+    }
+    
+    
+    public $baseUrl = 'http://www.ceneo.pl/';
+    public $opinonsTab = '/#tab=reviews';
+    public $opinionsSub = '/opinie-';
+    public $productId = 0;
+    public $sitesArray = Array();
+    public $productArray = Array();
+    public $sitesValue = 1;
+    public $subPageUrl = '';
+    public $firstPageArray = Array();
  
     public function Get_Url($baseUrl, $productId, $opinionsTab)
     {
@@ -31,30 +48,42 @@ class etl {
         return $subUrl;
     }
     
-    public function ex($sitesTabela, $productId, $sitesValue, $subPageUrl){
+    public function ex($productId){
         
     //    $product['nazwa'] = $html->find(".product-name", 0)->innertext;
     //    $product['cena'] = $html->find(".price", 0)->innertext;
     //    $product['Ocena'] = explode(' ', $html->find('span [itemprop=ratingValue]', 0)->plaintext )[0];
         
-        $productArray['type'] = $sitesTabela[$sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-gacategoryname'];
-        $productArray['brand'] = $sitesTabela[$sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-brand'];
-        $productArray['infos'] = str_replace($productId . '/', "", $sitesTabela[$sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-gaproductname']);
-        $productArray['model'] = $sitesTabela[$sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-gaproductid'];
-#var_dump($product);
-    
-        if ($sitesTabela[$sitesValue]->find('.arrow-next'))
-        {
-            while ($sitesTabela[$sitesValue]->find('.arrow-next'))
-            {
-                $sitesValue++;
-                $subUrl = $subPageUrl . $sitesValue;
-                $sitesTabela[$sitesValue] = new simple_html_dom();
-                $sitesTabela[$sitesValue]->load_file($subUrl);
-            }
-        }   
+        $a=1;
+        $this->productId = $productId;
+        $url = $this->Get_Url($this->baseUrl, $this->productId, $this->opinonsTab);
+        $subUrl = $this->Get_SubUrl($this->baseUrl, $this->productId, $this->opinionsSub);
+        
+        $temp = new simple_html_dom();
+        $page = $temp->load_file($url);
+        array_push($this->sitesArray, $page);
+//        $this->sitesArray[$a] = new simple_html_dom();
+//        $this->sitesArray[$a]->load_file($url);
+        $actual = $this->sitesArray[0];
 
-        return array($sitesTabela,$productArray);
+        $this->productArray['type'] = $actual->find("dl[data-gacategoryname]", 0)->attr['data-gacategoryname'];
+//        $this->productArray['brand'] = $this->sitesArray[$this->sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-brand'];
+//        $this->productArray['infos'] = str_replace($productId . '/', "", $this->sitesArray[$this->sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-gaproductname']);
+//        $this->productArray['model'] = $this->sitesArray[$this->sitesValue]->find("dl[data-gacategoryname]", 0)->attr['data-gaproductid'];
+
+    
+//        if ($this->sitesArray[$this->sitesValue]->find('.arrow-next'))
+//        {
+//            while ($this->sitesArray[$this->sitesValue]->find('.arrow-next'))
+//            {
+//                $this->sitesValue++;
+//                $subUrl = $this->subPageUrl . $this->sitesValue;
+//                $this->sitesArray[$this->sitesValue] = new simple_html_dom();
+//                $this->sitesArray[$this->sitesValue]->load_file($subUrl);
+//            }
+//        }   
+
+        return array($this->sitesArray,$this->productArray);
     } 
 
     public function tr($sitesArray)
@@ -204,44 +233,51 @@ class etl {
         return 0;
     }
     
- /*  public function check_isOrginal($productId)
+    public function check_isOrginal($productId)
     {
         $mysqli = $GLOBALS['mysqli'];
         $result = mysqli_query($mysqli, "SELECT * FROM products WHERE serial_number='$productId' LIMIT 1");
         if (mysqli_num_rows($result) > 0) {
-            echo 'Product exixts';
+            echo 'Product exixts';            
         return 0;
+        }
+        return 1;
     }
-    }*/
-    
- public function makeEtl() {
-     
-
-
-$etlObj = new etl;
-
-$productId = $_POST['idProduct'];
-$baseUrl = $etlObj->baseUrl;
-$opinionsTab = $etlObj->opinonsTab;
-$opinionsSub = $etlObj->opinionSub;
-
-//$etlObj->check_isOrginal($productId);
-
-$url = $etlObj->Get_Url($baseUrl, $productId, $opinionsTab);
-$subUrl = $etlObj->Get_SubUrl($baseUrl, $productId, $opinionsSub);
-
-$firstPageArray = Array();
-$sitesValue = 1;
-$firstPageArray[$sitesValue] = new simple_html_dom();
-$firstPageArray[$sitesValue]->load_file($url);
-
-
-$product = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[1];
-$sitesArray = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[0];
-$opinions = $etlObj->tr($sitesArray);   
-$etlObj->lo($product, $opinions, $productId);
-
- }
     
 }
-#################### MAIN ################################
+
+
+
+#$product = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[1];
+#$sitesArray = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[0];
+#$opinions = $etlObj->tr($sitesArray);   
+#$etlObj->lo($product, $opinions, $productId);
+
+ 
+//  public function makeEtl($productId) {
+//     
+//
+//$prodId = $this->productId = $_POST['idProduct'];
+//$baseUrl = $etlObj->baseUrl;
+//$opinionsTab = $etlObj->opinonsTab;
+//$opinionsSub = $etlObj->opinionSub;
+//
+////$etlObj->check_isOrginal($productId);
+//
+//$url = $etlObj->Get_Url($baseUrl, $productId, $opinionsTab);
+//$subUrl = $etlObj->Get_SubUrl($baseUrl, $productId, $opinionsSub);
+//
+//$firstPageArray = Array();
+//$sitesValue = 1;
+//$firstPageArray[$sitesValue] = new simple_html_dom();
+//$firstPageArray[$sitesValue]->load_file($url);
+//
+//
+//$product = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[1];
+//$sitesArray = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[0];
+//$opinions = $etlObj->tr($sitesArray);   
+//$etlObj->lo($product, $opinions, $productId);
+//
+// }
+    
+
