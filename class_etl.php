@@ -1,5 +1,6 @@
 <?php
 require('simple_html_dom.php');
+$GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_error());
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,6 +17,7 @@ class etl {
     var $baseUrl = 'http://www.ceneo.pl/';
     var $opinonsTab = '/#tab=reviews';
     var $opinionSub = '/opinie-';
+    
  
     public function Get_Url($baseUrl, $productId, $opinionsTab)
     {
@@ -156,7 +158,7 @@ class etl {
            $result = mysqli_query($mysqli, "SELECT * FROM ".$table);
 
         $row = mysqli_fetch_all($result, MYSQLI_NUM);
-        var_dump($row);
+       
         $fp = fopen($table.'.csv', 'w');
 
         foreach ($row as $val) {
@@ -165,6 +167,8 @@ class etl {
 
         fclose($fp); 
         }
+        
+        echo 'exportCSV';
     }
     
     public function exportTxt() 
@@ -185,6 +189,8 @@ class etl {
             fwrite($fp, "\n");
             fclose($fp);
         }
+        
+        echo 'exportTXT';
     }
     
     public function clearDB() 
@@ -208,14 +214,13 @@ class etl {
     }
     }*/
     
-}
-#################### MAIN ################################
-$GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_error());
+ public function makeEtl() {
+     
 
 
 $etlObj = new etl;
 
-$productId = $_GET['IDproduktu'];
+$productId = $_POST['idProduct'];
 $baseUrl = $etlObj->baseUrl;
 $opinionsTab = $etlObj->opinonsTab;
 $opinionsSub = $etlObj->opinionSub;
@@ -235,3 +240,8 @@ $product = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[1];
 $sitesArray = $etlObj->ex($firstPageArray, $productId, $sitesValue, $subUrl)[0];
 $opinions = $etlObj->tr($sitesArray);   
 $etlObj->lo($product, $opinions, $productId);
+
+ }
+    
+}
+#################### MAIN ################################
