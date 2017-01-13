@@ -1,14 +1,8 @@
 <pre><?php
-
-
 require ('connect_sql.php');
 connect_database();
-
-
 $dane = mysql_query("SELECT * FROM products ") ;
-
 close_sql_connection();
-
        echo '<br/>';
 	   echo '<br/>';
 		
@@ -32,18 +26,11 @@ close_sql_connection();
 		
 	};
 	echo "</table>"; 
-
 	
-
-
-
-
 ?>
 <!--
 <html>
 <form method="post" action="index.php">	
  <input type="submit" value="Powrot" />
 </form>
-
-
 </html>-->

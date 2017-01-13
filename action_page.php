@@ -15,7 +15,7 @@ if (isset($_POST['clearDB'])) {
     echo 'exported TXT';
     return 0;
 }else if($_GET['IDproduktu'] == null){
-    echo "Zjebie podaj numer produkt";
+    echo "Podaj numer produkt";
     return 0;
 }
 else if (isset($_GET['ETL'])) {
@@ -103,7 +103,7 @@ function etl() {
     } while ($html->find('.arrow-next'));
 
     foreach ($opinions as $opinion) {
-        $op = mysqli_query($mysqli, "Insert Into etl.opinions (product_id, text, stars, author, date, recomended, useful, useless) VALUES ('$id','" . $opinion['Opis'] . "','" . $opinion['Gwiazdki'] . "','" . $opinion['Opiniujacy'] . "','" . $opinion['Data opinii'] . "','" . $opinion['Rekomendacja'] . "','" . $opinion['Na TAK'] . "','" . $opinion['Na NIE'] . "')");
+        $op = mysqli_query($mysqli, "Insert Into etl.opinions (product_id, text, stars, author, date, recomended, useful, useless) VALUES ('$productId','" . $opinion['Opis'] . "','" . $opinion['Gwiazdki'] . "','" . $opinion['Opiniujacy'] . "','" . $opinion['Data opinii'] . "','" . $opinion['Rekomendacja'] . "','" . $opinion['Na TAK'] . "','" . $opinion['Na NIE'] . "')");
         if($op){
             $opCounter++;
         }
@@ -142,7 +142,6 @@ function exportCsv() {
        $result = mysqli_query($mysqli, "SELECT * FROM ".$table);
        
     $row = mysqli_fetch_all($result, MYSQLI_NUM);
-    var_dump($row);
     $fp = fopen($table.'.csv', 'w');
 
     foreach ($row as $val) {

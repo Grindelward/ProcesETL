@@ -1,5 +1,4 @@
 <pre><?php
-
 $productId = $_POST['idProduct'];
 require ('connect_sql.php');
 //connect_database();
@@ -7,8 +6,6 @@ $GLOBALS['mysqli'] = new mysqli("localhost", "root", "", "etl") or die(mysql_err
 $mysqli = $GLOBALS['mysqli'];
 $dane = mysqli_query($mysqli,"SELECT * FROM products WHERE serial_number='$productId'") ;
 $dane2 = mysqli_query($mysqli,"SELECT * FROM opinions  WHERE product_id='$productId'") ;
-
-
    echo '<br/>';
 	   echo '<br/>';
 		
@@ -32,12 +29,7 @@ $dane2 = mysqli_query($mysqli,"SELECT * FROM opinions  WHERE product_id='$produc
 		
 	};
 	echo "</table>"; 
-
-
-
-
 $lp = 1;
-
        echo '<br/>';
 	    echo '<br/>';
 		
@@ -70,45 +62,6 @@ $lp = $lp+1;
 	};
 	 
 	
-close_sql_connection();	
+
 	
 ?>
-
-
-
-
-
-
-
-
-
-<html>
-
- 
-<style>
-.error {color: #FF0000;}
-</style>
-</head>
-<body>  
-<form method="post" action="index.php">	
- <input type="submit" value="Powrot" />
-</form>
-
-
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
